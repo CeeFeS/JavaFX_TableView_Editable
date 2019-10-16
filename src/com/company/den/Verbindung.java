@@ -3,31 +3,41 @@ package com.company.den;
 public class Verbindung {
     private int nr;
     private String schrank;
-    private String geraet;
+    private String geraet1;
     private String slot;
     private String port;
     private String nach;
-    private String bucht;
-    private String footprint;
+    private String geraet2;
+    private String schrank2;
     private String laenge;
-    private String lwl;
+
     private String bemerkung;
     private String anbindung;
+    private String fiber_type;
 
-    public Verbindung(int nr, String schrank, String geraet, String slot, String port, String bucht, String footprint, String laenge, String lwl, String bemerkung, String anbindung) {
+    public Verbindung(int nr, String schrank, String geraet1, String slot, String port, String geraet2, String schrank2, String laenge, String bemerkung, String fiber_type, String anbindung) {
 
         this.nr = nr;
         this.schrank = schrank;
-        this.geraet = geraet;
+        this.geraet1 = geraet1;
         this.slot = slot;
         this.port = port;
-        this.nach = "<-->";
-        this.bucht = bucht;
-        this.footprint = footprint;
+        this.nach = "   \u27FA  ";
+        this.geraet2 = geraet2;
+        this.schrank2 = schrank2;
         this.laenge = laenge;
-        this.lwl = lwl;
+
         this.bemerkung = bemerkung;
         this.anbindung = anbindung;
+        this.fiber_type = fiber_type;
+    }
+
+    public String getFiber_type() {
+        return fiber_type;
+    }
+
+    public void setFiber_type(String fiber_type) {
+        this.fiber_type = fiber_type;
     }
 
     public String getAnbindung() {
@@ -62,12 +72,12 @@ public class Verbindung {
         this.schrank = schrank;
     }
 
-    public String getGeraet() {
-        return geraet;
+    public String getGeraet1() {
+        return geraet1;
     }
 
-    public void setGeraet(String geraet) {
-        this.geraet = geraet;
+    public void setGeraet1(String geraet) {
+        this.geraet1 = geraet;
     }
 
     public String getSlot() {
@@ -86,20 +96,20 @@ public class Verbindung {
         this.port = port;
     }
 
-    public String getBucht() {
-        return bucht;
+    public String getGeraet2() {
+        return geraet2;
     }
 
-    public void setBucht(String bucht) {
-        this.bucht = bucht;
+    public void setGeraet2(String geraet2) {
+        this.geraet2 = geraet2;
     }
 
-    public String getFootprint() {
-        return footprint;
+    public String getSchrank2() {
+        return schrank2;
     }
 
-    public void setFootprint(String footprint) {
-        this.footprint = footprint;
+    public void setSchrank2(String schrank2) {
+        this.schrank2 = schrank2;
     }
 
     public String getLaenge() {
@@ -109,14 +119,7 @@ public class Verbindung {
     public void setLaenge(String laenge) {
         this.laenge = laenge;
     }
-
-    public String getLwl() {
-        return lwl;
-    }
-
-    public void setLwl(String lwl) {
-        this.lwl = lwl;
-    }
+    
 
     public String getBemerkung() {
         return bemerkung;
@@ -130,14 +133,13 @@ public class Verbindung {
     public String toString() {
         return this.nr + " " +
                 this.schrank + " " +
-                this.geraet + " " +
+                this.geraet1 + " " +
                 this.slot + " " +
                 this.port + " " +
                 this.nach + " " +
-                this.bucht + " " +
-                this.footprint + " " +
+                this.geraet2 + " " +
+                this.schrank2 + " " +
                 this.laenge + " " +
-                this.lwl + " " +
                 this.bemerkung + " " +
                 this.anbindung;
     }

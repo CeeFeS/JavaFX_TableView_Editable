@@ -30,7 +30,7 @@ public class MainController {
 
     private TableColumn col_schrank1;
 
-    private TableColumn col_geraet;
+    private TableColumn col_geraet1;
 
     private TableColumn col_slot;
 
@@ -38,15 +38,15 @@ public class MainController {
 
     private TableColumn col_port;
 
-    private TableColumn col_bucht;
+    private TableColumn col_geraet2;
 
     private TableColumn col_schrank2;
 
     private TableColumn col_laenge;
-    private TableColumn col_lwl;
+
 
     private TableColumn col_bemerkung;
-
+    private TableColumn col_fiber_type;
     private TableColumn col_anbindung;
 
     @FXML
@@ -66,7 +66,6 @@ public class MainController {
     @FXML
     private void initialize() {
         this.nr = 1;
-        erstelleSpalten();
         spalten_vorbereiten();
         allezeilen = new ArrayList<>();
 
@@ -90,10 +89,10 @@ public class MainController {
         });
 /**Zellen die als CHoicebox dargestellt werden sollen */
         col_laenge.setCellFactory(column -> new Tabelle_ChoiceBox("laenge"));
-        col_lwl.setCellFactory(column -> new Tabelle_ChoiceBox("lwl"));
         col_slot.setCellFactory(column -> new Tabelle_ChoiceBox("slot"));
         col_port.setCellFactory(column -> new Tabelle_ChoiceBox("port"));
-        col_bucht.setCellFactory(column -> new Tabelle_ChoiceBox("bucht"));
+        col_geraet1.setCellFactory(column -> new Tabelle_ChoiceBox("geraet1"));
+        col_geraet2.setCellFactory(column -> new Tabelle_ChoiceBox("geraet2"));
         col_anbindung.setCellFactory(column -> new Tabelle_ChoiceBox("anbindung"));
 
         /**Zellen, die frei editierbar sein sollen*/
@@ -102,7 +101,7 @@ public class MainController {
         editierbareZellen(col_bemerkung, "bemerkung");
 
 
-        tabelle.getColumns().addAll(col_nr, col_schrank1, col_geraet, col_slot, col_nach, col_port, col_bucht, col_schrank2, col_laenge, col_lwl, col_bemerkung, col_anbindung);
+        tabelle.getColumns().addAll(col_nr, col_schrank1, col_geraet1, col_slot, col_nach, col_port, col_geraet2, col_schrank2, col_laenge, col_bemerkung, col_fiber_type, col_anbindung);
 
 
     }
@@ -118,7 +117,7 @@ public class MainController {
                         if (attribut.equals("schrank1")) {
                             t.getTableView().getItems().get(t.getTablePosition().getRow()).setSchrank(t.getNewValue());
                         } else if (attribut.equals("schrank2")) {
-                            t.getTableView().getItems().get(t.getTablePosition().getRow()).setFootprint(t.getNewValue());
+                            t.getTableView().getItems().get(t.getTablePosition().getRow()).setSchrank2(t.getNewValue());
                         } else if (attribut.equals("bemerkung")) {
                             t.getTableView().getItems().get(t.getTablePosition().getRow()).setBemerkung(t.getNewValue());
                         }
@@ -140,7 +139,7 @@ public class MainController {
         // On Cell edit commit (for FullName column)
 
 
-        Verbindung verbindung = new Verbindung(this.nr, "DC1 ext", "Gerät", "", "", "", "schrank", "", "", " ", "");
+        Verbindung verbindung = new Verbindung(this.nr, "DC1 ext", "(auswählen)", "(auswählen)", "(auswählen)", "(auswählen)", "schrank", "(auswählen)", "", "", "");
         allezeilen.add(verbindung);
     }
 
@@ -152,48 +151,35 @@ public class MainController {
     private void spalten_vorbereiten() {
 
         col_nr = new TableColumn<Verbindung, Integer>("Nr.");
-        col_schrank1 = new TableColumn<Verbindung, String>("Schrank");
-        col_geraet = new TableColumn<Verbindung, String>("Gerät");
-        col_slot = new TableColumn<Verbindung, String>("Slot");
+        col_nr.setPrefWidth(25);
+        col_schrank1 = new TableColumn<Verbindung, String>("Schrank /\nFootprint");
+        col_geraet1 = new TableColumn<Verbindung, String>("Gerät");
+        col_slot = new TableColumn<Verbindung, String>("Slot /\nPort");
         col_port = new TableColumn<Verbindung, String>("Port");
-        col_nach = new TableColumn<Verbindung, String>("nach");
-        col_bucht = new TableColumn<Verbindung, String>("Bucht");
-        col_schrank2 = new TableColumn<Verbindung, String>("Footprint");
+        col_nach = new TableColumn<Verbindung, String>("Nach");
+        col_nach.setPrefWidth(50);
+        col_geraet2 = new TableColumn<Verbindung, String>("Gerät");
+        col_schrank2 = new TableColumn<Verbindung, String>("Schrank /\nFootprint");
         col_laenge = new TableColumn<Verbindung, String>("Länge");
-        col_lwl = new TableColumn<Verbindung, String>("LWL");
+
         col_bemerkung = new TableColumn<Verbindung, String>("Bemerkung");
+        col_bemerkung.setPrefWidth(150);
         col_anbindung = new TableColumn<Verbindung, String>("Anbindung");
+        col_fiber_type = new TableColumn<Verbindung, String>("Fiber Type");
 
 
         col_nr.setCellValueFactory(new PropertyValueFactory<>("nr"));
         col_schrank1.setCellValueFactory(new PropertyValueFactory<>("schrank"));
-        col_geraet.setCellValueFactory(new PropertyValueFactory<>("geraet"));
+        col_geraet1.setCellValueFactory(new PropertyValueFactory<>("geraet1"));
         col_slot.setCellValueFactory(new PropertyValueFactory<>("slot"));
         col_port.setCellValueFactory(new PropertyValueFactory<>("port"));
         col_nach.setCellValueFactory(new PropertyValueFactory<>("nach"));
-        col_bucht.setCellValueFactory(new PropertyValueFactory<>("bucht"));
-        col_schrank2.setCellValueFactory(new PropertyValueFactory<>("footprint"));
+        col_geraet2.setCellValueFactory(new PropertyValueFactory<>("geraet2"));
+        col_schrank2.setCellValueFactory(new PropertyValueFactory<>("schrank2"));
         col_laenge.setCellValueFactory(new PropertyValueFactory<>("laenge"));
-        col_lwl.setCellValueFactory(new PropertyValueFactory<>("lwl"));
         col_bemerkung.setCellValueFactory(new PropertyValueFactory<>("bemerkung"));
         col_anbindung.setCellValueFactory(new PropertyValueFactory<>("anbindung"));
-
-    }
-
-    public void erstelleSpalten() {
-        col_nr = new TableColumn<Verbindung, Integer>();
-        col_schrank1 = new TableColumn<Verbindung, String>();
-        col_geraet = new TableColumn<Verbindung, String>();
-        col_slot = new TableColumn<Verbindung, String>();
-        col_port = new TableColumn<Verbindung, String>();
-        col_nach = new TableColumn<Verbindung, String>();
-        col_bucht = new TableColumn<Verbindung, String>();
-        col_schrank2 = new TableColumn<Verbindung, String>();
-        col_laenge = new TableColumn<Verbindung, String>();
-        col_lwl = new TableColumn<Verbindung, String>();
-        col_bemerkung = new TableColumn<Verbindung, String>();
-        col_anbindung = new TableColumn<Verbindung, String>();
-
+        col_fiber_type.setCellValueFactory(new PropertyValueFactory<>("fiber_type"));
 
     }
 
@@ -228,16 +214,16 @@ public class MainController {
             super.commitEdit(value);
             if (attribut.equals("laenge")) {
                 ((Verbindung) this.getTableRow().getItem()).setLaenge(value);
-            } else if (attribut.equals("lwl")) {
-                ((Verbindung) this.getTableRow().getItem()).setLwl(value);
             } else if (attribut.equals("port")) {
                 ((Verbindung) this.getTableRow().getItem()).setPort(value);
             } else if (attribut.equals("slot")) {
                 ((Verbindung) this.getTableRow().getItem()).setSlot(value);
-            } else if (attribut.equals("bucht")) {
-                ((Verbindung) this.getTableRow().getItem()).setBucht(value);
+            } else if (attribut.equals("geraet2")) {
+                ((Verbindung) this.getTableRow().getItem()).setGeraet2(value);
             } else if (attribut.equals("anbindung")) {
                 ((Verbindung) this.getTableRow().getItem()).setAnbindung(value);
+            } else if (attribut.equals("geraet1")) {
+                ((Verbindung) this.getTableRow().getItem()).setGeraet1(value);
             }
             setGraphic(null);
         }
