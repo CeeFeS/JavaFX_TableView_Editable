@@ -13,6 +13,10 @@ import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import java.io.*;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -54,9 +58,13 @@ public class MainController {
     @FXML
     private Button ausgabe;
     @FXML
+    private Button anwenden;
+    @FXML
     private TableView tabelle;
+    @FXML
+    private TextArea verkabelung_text;
 
-    private ArrayList<Verbindung> allezeilen;
+    private ArrayList<Verbindung> routerworkpack_verbindungen;
 
     private int nr;
 
@@ -65,9 +73,10 @@ public class MainController {
 
     @FXML
     private void initialize() {
+        anwenden.setText("\u2BA8");
         this.nr = 1;
         spalten_vorbereiten();
-        allezeilen = new ArrayList<>();
+        routerworkpack_verbindungen = new ArrayList<>();
 
         hinzufuegen.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -79,11 +88,18 @@ public class MainController {
             }
         });
 
+        anwenden.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                verkabelung_text_setzen();
+            }
+        });
+
         ausgabe.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("=======================================================================================================================");
-                for (Verbindung verbindung : allezeilen)
+                for (Verbindung verbindung : routerworkpack_verbindungen)
                     System.out.println(verbindung);
             }
         });
@@ -114,6 +130,7 @@ public class MainController {
                 new EventHandler<TableColumn.CellEditEvent<Verbindung, String>>() {
                     @Override
                     public void handle(TableColumn.CellEditEvent<Verbindung, String> t) {
+
                         if (attribut.equals("schrank1")) {
                             t.getTableView().getItems().get(t.getTablePosition().getRow()).setSchrank(t.getNewValue());
                         } else if (attribut.equals("schrank2")) {
@@ -139,13 +156,51 @@ public class MainController {
         // On Cell edit commit (for FullName column)
 
 
-        Verbindung verbindung = new Verbindung(this.nr, "DC1 ext", "(auswählen)", "(auswählen)", "(auswählen)", "(auswählen)", "schrank", "(auswählen)", "", "", "");
-        allezeilen.add(verbindung);
+        Verbindung verbindung = new Verbindung(this.nr, "(auswählen)", "(auswählen)", "(auswählen)", "(auswählen)", "(auswählen)", "(auswählen)", "(auswählen)", "(hinzufügen)", "", "keine Anbindung");
+        routerworkpack_verbindungen.add(verbindung);
     }
 
     private ObservableList<Verbindung> getVerbindungList() {
-        ObservableList<Verbindung> list = FXCollections.observableArrayList(allezeilen);
+        ObservableList<Verbindung> list = FXCollections.observableArrayList(routerworkpack_verbindungen);
         return list;
+    }
+
+    private void verkabelung_text_setzen() {
+        String gerät_anbindung1 = "XXXX";
+        String gerät_anbindung2 = "XXXX";
+        String slot_anbindung1 = "XXXX";
+        String slot_anbindung2 = "XXXX";
+        String nenr_anbindung2 = "XXXX";
+
+
+        String port_anbindung2 = "XXXX";
+        String schrank_anbindung1 = "XXXX";
+        String schrank_anbindung2 = "XXXX";
+        String nenr_anbindung1 = "XXXX";
+        String port_anbindung1 = "XXXX";
+
+
+        for (Verbindung verbindung : routerworkpack_verbindungen) {
+            if (verbindung.getAnbindung().equals("1. Anbindung")) {
+                gerät_anbindung1 = verbindung.getGeraet1();
+                slot_anbindung1 = verbindung.getSlot();
+                schrank_anbindung1 = verbindung.getSchrank();
+                port_anbindung1 = verbindung.getPort();
+
+            } else if (verbindung.getAnbindung().equals("2. Anbindung")) {
+                gerät_anbindung2 = verbindung.getGeraet1();
+                slot_anbindung2 = verbindung.getSlot();
+                schrank_anbindung2 = verbindung.getSchrank();
+                port_anbindung2 = verbindung.getPort();
+            }
+        }
+
+        verkabelung_text.setText("Erste Anbindung von Router " + gerät_anbindung1 + " Port " + slot_anbindung1 + " auf den " + schrank_anbindung1 + " " + nenr_anbindung1 + " Port " + port_anbindung1 + " über\n" +
+                "die DF XXXX zu Standort XXXX auf den XXXX XXXX Port XXXX zum Router XXXX\n" +
+                "Port XXXX.\n\n" +
+                "Zweite Anbindung von Router " + gerät_anbindung2 + " Port " + slot_anbindung2 + " auf den " + schrank_anbindung2 + " " + nenr_anbindung2 + " Port " + port_anbindung2 + " über die\n" +
+                "DF XXXX zu Standort XXXX auf den XXXX XXXX Port XXXX zum Router XXXX Port\n" +
+                "XXXX.");
     }
 
     private void spalten_vorbereiten() {
@@ -184,18 +239,52 @@ public class MainController {
     }
 
     private class Tabelle_ChoiceBox extends TableCell<Verbindung, String> {
+        ChoiceBox<String> choice;
 
-        ChoiceBox<String> buySellBox = new ChoiceBox<>();
         private String attribut = "";
 
         public Tabelle_ChoiceBox(String attribut) {
             this.attribut = attribut;
-            buySellBox.getItems().addAll("Testelement1", "Testelement2", "Testelement3");
-            buySellBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
-                String value = buySellBox.getItems().get(newValue.intValue());
+
+            choice = choiceBoxenSetzen(attribut);
+            choice.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
+                String value = choice.getItems().get(newValue.intValue());
                 processEdit(value);
             });
 
+        }
+
+
+        public ChoiceBox choiceBoxenSetzen(String attribut) {
+            ChoiceBox choiceBox = new ChoiceBox();
+            String jsonobject_name = "";
+            if (attribut.equals("laenge")) {
+                jsonobject_name = "jverkabelungLaenge";
+            } else if (attribut.equals("slot")) {
+                jsonobject_name = "jverkabelungSlotPort";
+            } else if (attribut.equals("port")) {
+                jsonobject_name = "jverkabelungPatchfeld";
+            } else if (attribut.equals("geraet1")) {
+                jsonobject_name = "jverkabelungGeraet";
+            } else if (attribut.equals("geraet2")) {
+                jsonobject_name = "jverkabelungBucht";
+            } else if (attribut.equals("anbindung")) {
+                choiceBox.getItems().addAll("1. Anbindung", "2. Anbindung", "Keine Anbindung");
+            }
+            try {
+
+                JSONParser parser = new JSONParser();
+                Object object = parser.parse(new FileReader("CheckBoxInhalte.json"));
+                JSONObject jsonObject = (JSONObject) object;
+
+                JSONArray jsonArray = (JSONArray) jsonObject.get(jsonobject_name);
+                for (Object newObject : jsonArray) {
+                    JSONObject newJsonObject = (JSONObject) newObject;
+                    choiceBox.getItems().addAll(newJsonObject.get("wert").toString());
+                }
+            } catch (Exception ex) {
+            }
+            return choiceBox;
         }
 
         private void processEdit(String value) {
@@ -233,7 +322,7 @@ public class MainController {
             super.startEdit();
             String value = getItem();
             if (value != null) {
-                setGraphic(buySellBox);
+                setGraphic(choice);
                 setText(null);
             }
         }
